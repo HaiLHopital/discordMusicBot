@@ -7,7 +7,10 @@
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.4.1",
     "fluent-ffmpeg": "^2.1.2",
+    "play-dl": "^1.9.5",
     "tweetnacl": "^1.0.3",
-    "ytdl-core": "^4.11.0"
+    "yt-search": "^2.10.3",
+    "ytdl-core": "^4.11.0",
+    "ytpl": "^2.3.0"
   }
 }
