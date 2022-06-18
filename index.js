@@ -82,11 +82,16 @@ client.on("messageCreate", async (message) => {
     if ((command == "play" || command == "playlist") && args) {
       let song, playlist;
       if (command == "play") {
-        const songInfo = await ytdl.getInfo(args[0]);
-        song = {
-          title: songInfo.videoDetails.title,
-          url: songInfo.videoDetails.video_url,
-        };
+        try {
+          const songInfo = await ytdl.getInfo(args[0]);
+          console.log("after get info");
+          song = {
+            title: songInfo.videoDetails.title,
+            url: songInfo.videoDetails.video_url,
+          };
+        } catch (error) {
+          message.channel.send(`Something went wrong`);
+        }
       } else {
         //console.log("playlist");
         playlist = await ytpl(args[0]);
@@ -123,6 +128,9 @@ client.on("messageCreate", async (message) => {
           //console.log(song.url);
 
           const player = createAudioPlayer();
+
+          queueContruct.player = player;
+          play(message.guild, queueContruct);
           player.on("error", (error) => {
             console.log("error");
             console.error(
@@ -135,18 +143,18 @@ client.on("messageCreate", async (message) => {
             queueContruct.songs.shift();
             play(message.guild, queueContruct);
           });
-          queueContruct.player = player;
-          play(message.guild, queueContruct);
         } catch (err) {
           console.log(err);
           queue.delete(message.guild.id);
           return message.channel.send(err);
         }
       } else {
-        serverQueue.songs.push(song);
-        return message.channel.send(
-          `${song.title} has been added to the queue!`
-        );
+        if (song) {
+          serverQueue.songs.push(song);
+          return message.channel.send(
+            `${song.title} has been added to the queue!`
+          );
+        }
       }
     } else if (command == "stop") {
       console.log("stop");
@@ -201,7 +209,10 @@ async function play(guild, queueContruct) {
     return;
   }
 
+  console.log("before stream");
   const stream = await playdl.stream(song.url);
+  console.log("after stream");
+  console.log(stream);
 
   const resource = createAudioResource(stream.stream, {
     inputType: stream.type,
