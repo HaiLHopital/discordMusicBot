@@ -169,24 +169,13 @@ client.on("messageCreate", async (message) => {
     } else if (command == "search" && args) {
       console.log("search ", args);
       query = args.join(" ");
-      console.log(query);
       const info = await playdl.search(query, {
         limit: 1,
       });
-      console.log(info);
       executeCommand("play", [info[0].url]);
     }
   }
 });
-function stop() {
-  //console.log(player);
-}
-function skip() {
-  console.log("skip");
-}
-function volume(volume) {
-  console.log(serverQueue.resource);
-}
 
 async function play(guild, queueContruct) {
   console.log("play");
@@ -196,23 +185,18 @@ async function play(guild, queueContruct) {
 
   if (!song) {
     //getVoiceConnection()
-    console.log("destroy");
     try {
       connection.destroy();
     } catch (error) {
       console.log(error.message);
     }
 
-    console.log("destroyed");
     //serverQueue.voiceChannel;
     queue.delete(guild.id);
     return;
   }
 
-  console.log("before stream");
   const stream = await playdl.stream(song.url);
-  console.log("after stream");
-  console.log(stream);
 
   const resource = createAudioResource(stream.stream, {
     inputType: stream.type,
